@@ -1,16 +1,20 @@
-const { account, SideToken, MainToken } = require('./contracts');
+const { account, getInstances } = require('./contracts');
 
 
-const depositToSideChain = ({ host, to, value }) => {
-  return SideToken._mint(to, value, { from: account });
+// Send token to sidechain
+const depositToSideChain = async ({ host, to, value }) => {
+  const { sideTokenInstance } = await getInstances();
+  return sideTokenInstance.chainReceive(to, value, { from: account });
 }
 
-const withdrawToMainChain = ({ host, to, value }) => {
-  return MainToken._mint(to, value, { from: account });
+// Get token from sidechain
+const withdrawToMainChain = async ({ host, to, value }) => {
+  const { mainTokenInstance } = await getInstances();
+  return mainTokenInstance.chainReceive(to, value, { from: account });
 }
 
 const handleMainChainEvents = (event) => {
-  switch (event.type) {
+  switch (event.event) {
     case 'ChainSend':
       return depositToSideChain(event.args);
     default:
@@ -19,7 +23,7 @@ const handleMainChainEvents = (event) => {
 };
 
 const handleSideChainEvents = (event) => {
-  switch (event.type) {
+  switch (event.event) {
     case 'ChainSend':
       return withdrawToMainChain(event.args);
     default:
