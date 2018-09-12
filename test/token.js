@@ -46,5 +46,20 @@ contract('Token', (accounts) => {
                 (await token.balanceOf.call(acc)).toNumber(), totalSupply, 'Tokens were transferred'
             )
         })
+
+        it('No permission to receive token', async () => {
+            let acc = accounts[0];
+            let testAcc = accounts[1];
+            const token = await Token.deployed();
+
+            try {
+                await token.chainReceive(acc, 1000, {from: testAcc});
+            } catch (error) {
+                assert(error.toString().includes('revert'), error.toString());
+                return;
+            }
+
+            assert(false, "Don't have permission to run this function");
+        })
     })
 })
