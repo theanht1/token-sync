@@ -5,9 +5,9 @@ import BigNumber from 'bignumber.js';
 
 import tokenArtifact from '../../build/contracts/Token.json';
 import '../stylesheets/app.css';
-const { MAIN_CHAIN_URI, SIDE_CHAIN_URI } = require('../../config.json');
+const { MAIN_CHAIN_URI, SIDE_CHAIN_URI, SERVER_ADDRESS } = require('../../config.json');
 
-axios.defaults.baseURL = 'http://localhost:3000/api';
+axios.defaults.baseURL = SERVER_ADDRESS + '/api';
 
 const TOKEN_CONFIG = {
   decimals: 18,
