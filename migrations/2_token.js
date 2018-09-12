@@ -2,7 +2,8 @@ const Token = artifacts.require('./Token.sol');
 
 const fs = require('fs');
 
-module.exports = (deployer, network) => {
+module.exports = (deployer, network, accounts) => {
+  const acc = accounts[1];
   const config = JSON.parse(fs.readFileSync('./conf/config.json'));
 
   async function giveTokensTo(tokenHolders) {
@@ -25,7 +26,7 @@ module.exports = (deployer, network) => {
 
   if (config.token.deployToken) {
     deployer.deploy(
-      Token, config.token.supply
+      Token, config.token.supply, {from: acc}
     )
       .then(async () => giveTokensTo(config.token.tokenHolders));
   } else {

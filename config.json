@@ -1,0 +1,4 @@
+{
+    "MAIN_CHAIN_URI": "https://ropsten.infura.io/",
+    "SIDE_CHAIN_URI": "https://rinkeby.infura.io/"
+}
