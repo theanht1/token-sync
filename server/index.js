@@ -1,6 +1,8 @@
 const express = require('express');
+const { hashObject } = require('./utils');
 const { MainToken, SideToken } = require('./utils/contracts');
 const { handleMainChainEvents, handleSideChainEvents } = require('./utils/eventHandlers');
+const { db } = require('./db');
 
 // App define
 const app = express();
@@ -28,8 +30,21 @@ let timer = setTimeout(async function handle() {
   timer = setTimeout(handle, 200);
 }, 200);
 
-const addEvent = (type, event) => {
-  eventBuffer.push({ type, event });
+const addEvent = async (type, event) => {
+  const keyHash = hashObject({
+    blockHash: event.blockHash,
+    transactionHash: event.transactionHash,
+    logIndex: event.logIndex,
+    event: event.event,
+  });
+
+  const existedEvent = await db.get(keyHash)
+    .catch(() => {});
+
+  if (!existedEvent) {
+    await db.put(keyHash, JSON.stringify(event));
+    eventBuffer.push({ type, event });
+  }
 };
 
 const setupEventListener = async () => {
@@ -43,7 +58,6 @@ const setupEventListener = async () => {
       console.log(err);
       return;
     }
-    console.log(event);
     addEvent('main', event);
   });
 
@@ -53,7 +67,6 @@ const setupEventListener = async () => {
       console.log(err);
       return;
     }
-    console.log(event);
     addEvent('side', event);
   });
 }
