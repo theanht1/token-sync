@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 
 import tokenArtifact from '../../build/contracts/Token.json';
 import '../stylesheets/app.css';
+const { MAIN_CHAIN_URI, SIDE_CHAIN_URI } = require('../../config.json');
 
 axios.defaults.baseURL = 'http://localhost:3000/api';
 
@@ -41,6 +42,7 @@ window.App = {
       account = accounts[0];
 
       App.getBalance();
+      App.setSendChainTokenLabel();
 
       // Reload when changing Metamask account or network
       web3.currentProvider.publicConfigStore.on('update', ({ selectedAddress }) => {
@@ -50,6 +52,12 @@ window.App = {
         }
       });
     })
+  },
+
+  setSendChainTokenLabel: () => {
+    const label = web3.eth.providers.host === MAIN_CHAIN_URI ?
+      'Deposit token' : 'Withdraw token';
+    document.getElementById('label').textContent = label;
   },
 
   getBalance: () => {
@@ -71,13 +79,7 @@ window.App = {
     const tokenInstance = await Token.deployed();
     const to = document.getElementById('send-address').value;
     const amount = document.getElementById('send-amount').value;
-    return tokenInstance.transfer(to, amount * (10 ** TOKEN_CONFIG.decimals), { from: account })
-      .then((res) => {
-        alert('Transfer to token to server successfully. Please waiting for server transfer to other chain');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    return tokenInstance.transfer(to, amount * (10 ** TOKEN_CONFIG.decimals), { from: account });
   },
 };
 
