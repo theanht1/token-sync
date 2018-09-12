@@ -58,6 +58,16 @@ window.App = {
     const netId = await web3.eth.net.getId();
     const label = netId === MAIN_CHAIN_ID ? 'Deposit token' : 'Withdraw token';
     document.getElementById('label').textContent = label;
+
+    const mainChainEl = document.getElementById('main-chain');
+    const sideChainEl = document.getElementById('side-chain');
+    if (netId === MAIN_CHAIN_ID) {
+      mainChainEl.style.fontWeight = 600;
+      sideChainEl.style.fontWeight = 100;
+    } else if (netId === SIDE_CHAIN_ID) {
+      mainChainEl.style.fontWeight = 100;
+      sideChainEl.style.fontWeight = 600;
+    }
   },
 
   getBalance: () => {
