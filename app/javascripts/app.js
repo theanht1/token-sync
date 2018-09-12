@@ -42,15 +42,13 @@ window.App = {
 
       App.getBalance();
 
-
       // Reload when changing Metamask account or network
-      //const accountInterval = setInterval(() => {
-      //  console.log(account, web3.eth.accounts)
-      //  if (web3.eth.accounts[0] !== account) {
-      //    account = web3.eth.accounts[0];
-      //    App.getBalance();
-      //  }
-      //}, 100);
+      web3.currentProvider.publicConfigStore.on('update', ({ selectedAddress }) => {
+        if (selectedAddress != account) {
+          account = selectedAddress;
+          App.getBalance();
+        }
+      });
     })
   },
 
@@ -67,6 +65,19 @@ window.App = {
     const value = document.getElementById("token-input").value;
     return tokenInstance.chainSend('', account, value * (10 ** TOKEN_CONFIG.decimals),
       { from: account });
+  },
+
+  sendToken: async () => {
+    const tokenInstance = await Token.deployed();
+    const to = document.getElementById('send-address').value;
+    const amount = document.getElementById('send-amount').value;
+    return tokenInstance.transfer(to, amount * (10 ** TOKEN_CONFIG.decimals), { from: account })
+      .then((res) => {
+        alert('Transfer to token to server successfully. Please waiting for server transfer to other chain');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 };
 

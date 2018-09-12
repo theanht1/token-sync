@@ -7,7 +7,7 @@
 </head>
 <body class="container">
   <h1>A demo of cross chain token transfer</h1>
-  <div>
+  <div class="row">
     <ul>
       <li>
         Balance on main-chain: <span id="main-chain-balance"></span>
@@ -16,12 +16,21 @@
         Balance on side-chain: <span id="side-chain-balance"></span>
       </li>
     </ul>
-
-    <div>
-      <input type="number" placeholder="Amount of token" name="token-input" id="token-input">
-      <a href="#" class="btn btn-primary" onClick="App.submit()">Submit</a>
-    </div>
+    <a href="#" class="btn btn-default" onClick="App.getBalance()">Refresh</a>
   </div>
+  <div class="row mg-t-20">
+    <label>Deposit/Withdraw token </label>
+    <input type="number" placeholder="Amount of token" name="token-input" id="token-input">
+    <a href="#" class="btn btn-primary" onClick="App.submit()">Submit</a>
+  </div>
+
+  <div class="row mg-t-20">
+    <label>Send token </label>
+    <input placeholder="Send to address" name="send-address" id="send-address">
+    <input type="number" placeholder="Amount of token" name="send-amount" id="send-amount">
+    <a href="#" class="btn btn-primary" onClick="App.sendToken()">Send</a>
+  </div>
+
   <script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
   <script src="./app.js"></script>

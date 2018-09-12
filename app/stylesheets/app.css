@@ -5,13 +5,8 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 
-label {
-  display: inline-block;
-  width: 100px;
-}
-
 input {
-  width: 500px;
+  width: 300px;
   padding: 5px;
   font-size: 16px;
 }
@@ -49,4 +44,8 @@ h3 {
 
 .hint {
   color: #666;
+}
+
+.mg-t-20 {
+  margin-top: 20px;
 }
