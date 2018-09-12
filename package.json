@@ -8,7 +8,8 @@
   },
   "scripts": {
     "server": "nodemon --config nodemon.json server/index.js",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",

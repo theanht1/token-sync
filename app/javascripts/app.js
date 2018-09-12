@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 
 import tokenArtifact from '../../build/contracts/Token.json';
 import '../stylesheets/app.css';
-const { MAIN_CHAIN_URI, SIDE_CHAIN_URI, SERVER_ADDRESS } = require('../../config.json');
+const { SERVER_ADDRESS, MAIN_CHAIN_ID, SIDE_CHAIN_ID } = require('../../config.json');
 
 axios.defaults.baseURL = SERVER_ADDRESS + '/api';
 
@@ -54,9 +54,9 @@ window.App = {
     })
   },
 
-  setSendChainTokenLabel: () => {
-    const label = web3.eth.providers.host === MAIN_CHAIN_URI ?
-      'Deposit token' : 'Withdraw token';
+  setSendChainTokenLabel: async () => {
+    const netId = await web3.eth.net.getId();
+    const label = netId === MAIN_CHAIN_ID ? 'Deposit token' : 'Withdraw token';
     document.getElementById('label').textContent = label;
   },
 
