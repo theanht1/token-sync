@@ -1,8 +1,20 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+const { Event } = require('./models');
 const { hashObject, hashEvent, buyRequestHash } = require('./utils');
 const { MainToken, SideToken, getInstances, sign } = require('./utils/contracts');
-const { handleMainChainEvents, handleSideChainEvents } = require('./utils/eventHandlers');
-const { db } = require('./db');
+const {
+  handleMainChainEvents,
+  handleSideChainEvents,
+  getUnconfirmRequests,
+} = require('./utils/eventHandlers');
+
+// MongoDB configuration
+mongoose.connect('mongodb://localhost:27017/token', {
+  useNewUrlParser: true,
+});
 
 // App define
 const app = express();
@@ -13,7 +25,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
-
+app.use(bodyParser.json());
 
 /* APIs */
 
@@ -28,18 +40,31 @@ app.get('/api/balance', async ({
   return res.status(200).json({ account, mainBalance, sideBalance });
 });
 
+// Get unconfirmed buy token requests
+app.get('/api/unconfirmed-requests', async ({
+  query: { address },
+}, res) => {
+  const mainRequests = await getUnconfirmRequests(address, 'main');
+  const sideRequests = await getUnconfirmRequests(address, 'side');
+
+  res.status(200).json({
+    mainRequests,
+    sideRequests,
+  });
+});
+
 app.post('/api/retrieve-msg', async ({
   body: { event },
 }, res) => {
   const keyHash = hashEvent(event);
-  const existedEvent = await db.get(keyHash)
+  const existedEvent = await Event.findOne({ key: keyHash })
     .catch(() => {});
 
   if (!existedEvent) {
     return res.status(404).json({ error: 'Event not found. Please try again later' });
   }
 
-  const eventObj = JSON.parse(existedEvent);
+  const eventObj = JSON.parse(existedEvent.content);
   const signedMsg = sign(buyRequestHash(eventObj.args));
   res.status(200).json({ signedMsg });
 });
@@ -66,11 +91,16 @@ let timer = setTimeout(async function handle() {
 const addEvent = async (type, event) => {
   const keyHash = hashEvent(event);
 
-  const existedEvent = await db.get(keyHash)
+  const existedEvent = await Event.findOne({ key: keyHash })
     .catch(() => {});
 
   if (!existedEvent) {
-    await db.put(keyHash, JSON.stringify(event));
+    await Event.create({
+      key: keyHash,
+      chain: type,
+      type: event.event,
+      content: JSON.stringify(event),
+    });
     eventBuffer.push({ type, event });
   }
 };

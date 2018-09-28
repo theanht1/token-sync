@@ -2,6 +2,8 @@ const HDWalletProvider = require('truffle-hdwallet-provider-privkey');
 const fs = require('fs');
 const contract = require('truffle-contract');
 const { signing } = require('eth-lightwallet');
+const utils = require('ethereumjs-util');
+
 
 const tokenArtifact = require('../../build/contracts/Token.json');
 const { MAIN_CHAIN_URL, SIDE_CHAIN_URL } = require('../../config.json');
@@ -37,7 +39,7 @@ const getInstances = async () => {
 }
 
 const sign = (msg) => {
-  const signedMsg = signing.signMsgHash(msg, privateKeys[0]);
+  const signedMsg = utils.ecsign(msg, Buffer.from(privateKeys[0], 'hex'));
   return signing.concatSig(signedMsg);
 };
 
