@@ -31,13 +31,13 @@ module.exports = {
       gasPrice: 25000000000,
     },
     mainchain: {
-      provider: new HDWalletProvider(privateKeys, config.MAIN_CHAIN_ADDRESS),
+      provider: new HDWalletProvider(privateKeys, config.MAIN_CHAIN_URL),
       network_id: '*',
       gas: 4500000,
       gasPrice: 10000000000,
     },
     sidechain: {
-      provider: new HDWalletProvider(privateKeys, config.SIDE_CHAIN_ADDRESS),
+      provider: new HDWalletProvider(privateKeys, config.SIDE_CHAIN_URL),
       network_id: '*',
       gas: 4500000,
       gasPrice: 10000000000,

@@ -4,7 +4,7 @@ const contract = require('truffle-contract');
 const { signing } = require('eth-lightwallet');
 
 const tokenArtifact = require('../../build/contracts/Token.json');
-const { MAIN_CHAIN_URI, SIDE_CHAIN_URI } = require('../../config.json');
+const { MAIN_CHAIN_URL, SIDE_CHAIN_URL } = require('../../config.json');
 
 let secrets;
 let privateKeys = [];
@@ -15,12 +15,12 @@ if (fs.existsSync('secrets.json')) {
 }
 
 // Mainchain contract
-const mainProvider =  new HDWalletProvider(privateKeys, MAIN_CHAIN_URI);
+const mainProvider =  new HDWalletProvider(privateKeys, MAIN_CHAIN_URL);
 const MainToken = contract(tokenArtifact);
 MainToken.setProvider(mainProvider);
 
 // Sidechain contract
-const sideProvider =  new HDWalletProvider(privateKeys, SIDE_CHAIN_URI);
+const sideProvider =  new HDWalletProvider(privateKeys, SIDE_CHAIN_URL);
 const SideToken = contract(tokenArtifact);
 SideToken.setProvider(sideProvider);
 

@@ -1,4 +1,5 @@
 {
-    "MAIN_CHAIN_ADDRESS": "http://18.223.124.19:8501",
-    "SIDE_CHAIN_ADDRESS": "http://18.223.124.19:8502"
+    "MAIN_CHAIN_URL": "http://localhost:8545",
+    "SIDE_CHAIN_URL": "http://localhost:8546",
+    "SERVER_ADDRESS": "http://localhost:3000"
 }
