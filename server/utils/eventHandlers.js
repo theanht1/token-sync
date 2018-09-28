@@ -1,33 +1,33 @@
 const { account, getInstances } = require('./contracts');
 
 
-// Send token to sidechain
-const depositToSideChain = async ({ host, to, value }) => {
-  const { sideTokenInstance } = await getInstances();
-  return sideTokenInstance.chainReceive(to, value, { from: account });
+// Buy tokens
+const buy = async (chain, { id, to, value }) => {
+  console.log(`Buy in ${chain}, id: ${id}, address: ${to}, amount: ${value}`);
 }
 
-// Get token from sidechain
-const withdrawToMainChain = async ({ host, to, value }) => {
-  const { mainTokenInstance } = await getInstances();
-  return mainTokenInstance.chainReceive(to, value, { from: account });
+// Confirm request to buy
+const confirmBuy = async (chain, { id, to, value }) => {
+  console.log(`Confirm buy in ${chain}, id: ${id}, address: ${to}, amount: ${value}`);
 }
 
 const handleMainChainEvents = (event) => {
   switch (event.event) {
-    case 'ChainSend':
-      return depositToSideChain(event.args);
+    case 'Buy':
+      return buy('MainChain', event.args);
+    case 'ConfigBuy':
+      return confirmBuy('MainChain', event.args);
     default:
-      console.log(event);
   }
 };
 
 const handleSideChainEvents = (event) => {
   switch (event.event) {
-    case 'ChainSend':
-      return withdrawToMainChain(event.args);
+    case 'Buy':
+      return buy('SideChain', event.args);
+    case 'ConfigBuy':
+      return confirmBuy('SideChain', event.args);
     default:
-      console.log(event);
   }
 };
 

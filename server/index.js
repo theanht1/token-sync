@@ -1,6 +1,6 @@
 const express = require('express');
-const { hashObject } = require('./utils');
-const { MainToken, SideToken, getInstances } = require('./utils/contracts');
+const { hashObject, hashEvent, buyRequestHash } = require('./utils');
+const { MainToken, SideToken, getInstances, sign } = require('./utils/contracts');
 const { handleMainChainEvents, handleSideChainEvents } = require('./utils/eventHandlers');
 const { db } = require('./db');
 
@@ -14,7 +14,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// APIs
+
+/* APIs */
+
+// Get balances
 app.get('/api/balance', async ({
   query: { account },
 }, res) => {
@@ -25,11 +28,29 @@ app.get('/api/balance', async ({
   return res.status(200).json({ account, mainBalance, sideBalance });
 });
 
+app.post('/api/retrieve-msg', async ({
+  body: { event },
+}, res) => {
+  const keyHash = hashEvent(event);
+  const existedEvent = await db.get(keyHash)
+    .catch(() => {});
+
+  if (!existedEvent) {
+    return res.status(404).json({ error: 'Event not found. Please try again later' });
+  }
+
+  const eventObj = JSON.parse(existedEvent);
+  const signedMsg = sign(buyRequestHash(eventObj.args));
+  res.status(200).json({ signedMsg });
+});
+
 app.listen(3000, () => {
   console.log('Server start at port 3000');
 });
 
-// Event listeners
+
+/* Event listeners */
+
 const handleEvent = ({ type, event }) => {
   return type === 'main' ? handleMainChainEvents(event) : handleSideChainEvents(event);
 }
@@ -43,12 +64,7 @@ let timer = setTimeout(async function handle() {
 }, 200);
 
 const addEvent = async (type, event) => {
-  const keyHash = hashObject({
-    blockHash: event.blockHash,
-    transactionHash: event.transactionHash,
-    logIndex: event.logIndex,
-    event: event.event,
-  });
+  const keyHash = hashEvent(event);
 
   const existedEvent = await db.get(keyHash)
     .catch(() => {});

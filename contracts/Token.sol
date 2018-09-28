@@ -11,7 +11,7 @@ import './utils/ERC20.sol';
 contract Token is ERC20, ERC20Detailed, Ownable {
 
     // EVENTS
-    event Buy(address indexed from, uint value, uint id);
+    event Buy(uint id, address to, uint value);
     event ConfirmBuy(uint id, address to, uint value);
 
     uint nBuy;
@@ -35,7 +35,7 @@ contract Token is ERC20, ERC20Detailed, Ownable {
     function buy(uint _value) public {
         require(this.transfer(this, _value));
         nBuy = nBuy.add(1);
-        emit Buy(msg.sender, _value, nBuy);
+        emit Buy(nBuy, msg.sender, _value);
     }
 
     /// @author Walter

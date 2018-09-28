@@ -1,6 +1,7 @@
 const HDWalletProvider = require('truffle-hdwallet-provider-privkey');
 const fs = require('fs');
 const contract = require('truffle-contract');
+const { signing } = require('eth-lightwallet');
 
 const tokenArtifact = require('../../build/contracts/Token.json');
 const { MAIN_CHAIN_URI, SIDE_CHAIN_URI } = require('../../config.json');
@@ -35,9 +36,15 @@ const getInstances = async () => {
   };
 }
 
+const sign = (msg) => {
+  const signedMsg = signing.signMsgHash(msg, privateKeys[0]);
+  return signing.concatSig(signedMsg);
+};
+
 module.exports = {
   account,
   MainToken,
   SideToken,
   getInstances,
+  sign,
 };
