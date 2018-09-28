@@ -1,7 +1,4 @@
 {
-    "MAIN_CHAIN_URI": "https://ropsten.infura.io/",
-    "MAIN_CHAIN_ID": 3,
-    "SIDE_CHAIN_URI": "https://rinkeby.infura.io/",
-    "SIDE_CHAIN_ID": 4,
-    "SERVER_ADDRESS": "http://ec2-18-223-124-19.us-east-2.compute.amazonaws.com:3000"
+    "MAIN_CHAIN_ADDRESS": "http://18.223.124.19:8501",
+    "SIDE_CHAIN_ADDRESS": "http://18.223.124.19:8502"
 }

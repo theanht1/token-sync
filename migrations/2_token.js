@@ -5,7 +5,8 @@ const fs = require('fs');
 module.exports = (deployer, network, accounts) => {
   const acc = accounts[1];
   const config = JSON.parse(fs.readFileSync('./conf/config.json'));
-
+  console.log(accounts, network);
+  return;
   async function giveTokensTo(tokenHolders) {
     if (tokenHolders.length === 0) { return; }
     const token = await Token.deployed();

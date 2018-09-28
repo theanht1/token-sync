@@ -1,5 +1,6 @@
 const HDWalletProvider = require('truffle-hdwallet-provider-privkey');
 const fs = require('fs');
+const config = require('./config.json');
 
 let secrets;
 let privateKeys = [];
@@ -8,7 +9,7 @@ if (fs.existsSync('secrets.json')) {
   secrets = JSON.parse(fs.readFileSync('secrets.json', 'utf8'));
   ({ privateKeys } = secrets);
 }
-
+console.log(privateKeys)
 module.exports = {
   networks: {
     mainnet: {
@@ -28,6 +29,18 @@ module.exports = {
       network_id: '*',
       gas: 4500000,
       gasPrice: 25000000000,
+    },
+    mainchain: {
+      provider: new HDWalletProvider(privateKeys, config.MAIN_CHAIN_ADDRESS),
+      network_id: '*',
+      gas: 4500000,
+      gasPrice: 10000000000,
+    },
+    sidechain: {
+      provider: new HDWalletProvider(privateKeys, config.SIDE_CHAIN_ADDRESS),
+      network_id: '*',
+      gas: 4500000,
+      gasPrice: 10000000000,
     },
     ganache: {
       provider: new HDWalletProvider(privateKeys, 'http://localhost:8545'),
