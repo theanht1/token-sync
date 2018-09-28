@@ -9,7 +9,7 @@ if (fs.existsSync('secrets.json')) {
   secrets = JSON.parse(fs.readFileSync('secrets.json', 'utf8'));
   ({ privateKeys } = secrets);
 }
-console.log(privateKeys)
+
 module.exports = {
   networks: {
     mainnet: {

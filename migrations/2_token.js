@@ -3,37 +3,41 @@ const Token = artifacts.require('./Token.sol');
 const fs = require('fs');
 
 module.exports = (deployer, network, accounts) => {
-  const acc = accounts[1];
+  const acc = accounts[0];
   const config = JSON.parse(fs.readFileSync('./conf/config.json'));
-  console.log(accounts, network);
-  return;
-  async function giveTokensTo(tokenHolders) {
-    if (tokenHolders.length === 0) { return; }
-    const token = await Token.deployed();
-    const tokenHolder = tokenHolders[0];
 
-    const displayAmt = tokenHolder.amount.slice(
+  const sendToken = async (address, amount) => {
+    const displayAmt = amount.slice(
       0,
-      tokenHolder.amount.length - parseInt(config.token.decimals, 10),
+      amount.length - parseInt(config.token.decimals, 10),
     );
     // eslint-disable-next-line
     console.log(`Allocating ${displayAmt} ${config.token.symbol} tokens to ` +
-    `${tokenHolder.address}.`);
+    `${address}.`);
 
-    await token.transfer(tokenHolder.address, tokenHolder.amount);
+    const token = await Token.deployed();
+    return token.transfer(address, amount);
+  };
 
+  const giveTokensTo = async (tokenHolders) => {
+    if (tokenHolders.length === 0) { return; }
+    const tokenHolder = tokenHolders[0];
+    await sendToken(tokenHolder.address, tokenHolder.amount);
     await giveTokensTo(tokenHolders.slice(1));
-  }
+  };
 
-  if (config.token.deployToken) {
-    deployer.deploy(
-      Token, config.token.supply, {from: acc}
-    )
-      .then(async () => giveTokensTo(config.token.tokenHolders));
-  } else {
-    // eslint-disable-next-line
-    console.log('skipping optional token deploy and using the token at address ' +
-      `${config.token.address} on network ${network}.`);
-  }
+  deployer.deploy(
+    Token, config.token.supply, config.token.name,
+    config.token.symbol, config.token.decimals, {from: acc}
+  )
+    .then(async (result) => {
+      if (network === 'sidechain') {
+        // Give all tokens to the token contract in side chain
+        sendToken(result.address, config.token.supply);
+      } else {
+        // Distribute tokens on main chain
+        giveTokensTo(config.token.tokenHolders);
+      }
+    });
 };
 

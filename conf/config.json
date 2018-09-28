@@ -1,13 +1,12 @@
 {
   "token": {
-    "deployToken": true,
     "decimals": "18",
-    "name": "GotItCoin",
-    "symbol": "GIC",
-    "supply": "1000000000000000000000000000",
+    "name": "Knowledge Network Token",
+    "symbol": "KNOT",
+    "supply": "2000000000000000000000000000",
     "tokenHolders": [
-      { "address": "0xaABcA6428fE42f6a82A3b1C7A77EDC8dCCC43779",
-        "amount": "1000000000000000000000000000" }
+      { "address": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+        "amount": "2000000000000000000000000000" }
     ]
   }
 }
