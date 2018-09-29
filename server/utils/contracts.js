@@ -39,7 +39,7 @@ const getInstances = async () => {
 }
 
 const sign = (msg) => {
-  const signedMsg = utils.ecsign(msg, Buffer.from(privateKeys[0], 'hex'));
+  const signedMsg = utils.ecsign(utils.toBuffer(msg), Buffer.from(privateKeys[0], 'hex'));
   return signing.concatSig(signedMsg);
 };
 

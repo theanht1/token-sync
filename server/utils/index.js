@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const util = require('ethereumjs-util');
 
 
 const hashObject = (obj) => {
@@ -15,12 +14,7 @@ const hashEvent = (event) => {
   });
 };
 
-const buyRequestHash = ({ id, to, value }) => {
-  return util.sha3([id, to, value]);
-};
-
 module.exports = {
   hashObject,
   hashEvent,
-  buyRequestHash,
 };

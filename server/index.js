@@ -1,15 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const Web3 = require('web3');
 
 const { Event } = require('./models');
-const { hashObject, hashEvent, buyRequestHash } = require('./utils');
+const { hashObject, hashEvent } = require('./utils');
 const { MainToken, SideToken, getInstances, sign } = require('./utils/contracts');
 const {
   handleMainChainEvents,
   handleSideChainEvents,
   getUnconfirmRequests,
 } = require('./utils/eventHandlers');
+
+const web3 = new Web3();
 
 // MongoDB configuration
 mongoose.connect('mongodb://localhost:27017/token', {
@@ -65,7 +68,9 @@ app.post('/api/retrieve-msg', async ({
   }
 
   const eventObj = JSON.parse(existedEvent.content);
-  const signedMsg = sign(buyRequestHash(eventObj.args));
+  const { args: { id, to, value } } = eventObj;
+  const msg = web3.utils.soliditySha3(id, to, value);
+  const signedMsg = sign(msg);
   res.status(200).json({ signedMsg });
 });
 

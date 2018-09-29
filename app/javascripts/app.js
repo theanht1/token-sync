@@ -6,19 +6,16 @@ import BigNumber from 'bignumber.js';
 import tokenArtifact from '../../build/contracts/Token.json';
 import '../stylesheets/app.css';
 const { SERVER_ADDRESS, MAIN_CHAIN_ID, SIDE_CHAIN_ID } = require('../../config.json');
+const CONFIG = require('../../conf/config.json');
 
+const TOKEN_CONFIG = CONFIG.token;
 axios.defaults.baseURL = SERVER_ADDRESS + '/api';
-
-const TOKEN_CONFIG = {
-  decimals: 18,
-  symbol: 'COIN',
-};
 
 const Token = contract(tokenArtifact);
 
 let accounts;
 let account;
-
+let boughtEvents;
 
 // Main app
 window.App = {
@@ -43,6 +40,7 @@ window.App = {
 
       App.getBalance();
       App.setSendChainTokenLabel();
+      App.getBuyEvents();
 
       // Reload when changing Metamask account or network
       web3.currentProvider.publicConfigStore.on('update', ({ selectedAddress }) => {
@@ -56,8 +54,6 @@ window.App = {
 
   setSendChainTokenLabel: async () => {
     const netId = await web3.eth.net.getId();
-    const label = netId === MAIN_CHAIN_ID ? 'Deposit token' : 'Withdraw token';
-    document.getElementById('label').textContent = label;
 
     const mainChainEl = document.getElementById('main-chain');
     const sideChainEl = document.getElementById('side-chain');
@@ -78,11 +74,21 @@ window.App = {
       });
   },
 
-  submit: async () => {
+  buy: async () => {
     const tokenInstance = await Token.deployed();
     const value = document.getElementById("token-input").value;
-    return tokenInstance.chainSend('', account, value * (10 ** TOKEN_CONFIG.decimals),
-      { from: account });
+    return tokenInstance.buy(value * (10 ** TOKEN_CONFIG.decimals), { from: account });
+  },
+
+  confirm: async (index) => {
+    const event = JSON.parse(boughtEvents[index].content);
+    return axios.post('/retrieve-msg', { event })
+      .then(async ({ data: { signedMsg } }) => {
+        console.log(signedMsg);
+        const tokenInstance = await Token.deployed();
+        const { args: { id, to, value } } = event;
+        await tokenInstance.confirmBuy(id, to, value, signedMsg, { from: account });
+      })
   },
 
   sendToken: async () => {
@@ -90,6 +96,24 @@ window.App = {
     const to = document.getElementById('send-address').value;
     const amount = document.getElementById('send-amount').value;
     return tokenInstance.transfer(to, amount * (10 ** TOKEN_CONFIG.decimals), { from: account });
+  },
+
+  getBuyEvents: async () => {
+    return axios.get('/unconfirmed-requests', {
+      query: { address: account },
+    })
+      .then(({ data }) => {
+        boughtEvents = data.mainRequests;
+        boughtEvents.forEach((event, index) => {
+          const buyEvent = JSON.parse(event.content);
+          $('#bought-list').append(
+            `<li>
+              Buy ${balanceBeatify(buyEvent.args.value)}
+              <a class="btn btn-secondary" href="#" onClick="App.confirm(${index})">Confirm</a>
+            </li>`
+          )
+        });
+      });
   },
 };
 
