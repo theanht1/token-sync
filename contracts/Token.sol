@@ -14,7 +14,7 @@ contract Token is ERC20, ERC20Detailed, Ownable {
     event Buy(uint id, address to, uint value);
     event ConfirmBuy(uint id, address to, uint value);
 
-    uint nBuy;
+    uint public nBuy;
     mapping (uint => bool) public isCompletedBuy;
 
 
@@ -43,11 +43,11 @@ contract Token is ERC20, ERC20Detailed, Ownable {
     /// @param _to Address of buyer
     /// @param _value Amount of token to buy
     function confirmBuy(uint _id, address _to, uint _value, bytes _sig) public {
-        require(balanceOf(this) >= _value);
-        require(!isCompletedBuy[_id]);
+        require(balanceOf(this) >= _value, "Contract doesn't have enought token");
+        require(!isCompletedBuy[_id], "This transaction has already been executed");
 
         bytes32 hash = keccak256(abi.encodePacked(_id, _to, _value));
-        require(ECDSA.recover(hash, _sig) == owner());
+        require(ECDSA.recover(hash, _sig) == owner(), "Signature is invalid");
 
         _balances[this] = _balances[this].sub(_value);
         _balances[_to] = _balances[_to].add(_value);
