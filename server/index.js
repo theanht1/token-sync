@@ -69,7 +69,8 @@ app.post('/api/retrieve-msg', async ({
 
   const eventObj = JSON.parse(existedEvent.content);
   const { args: { id, to, value } } = eventObj;
-  const msg = web3.utils.soliditySha3(id, to, value);
+  // TODO: Need to save value as plan string inorder to recover big number
+  const msg = web3.utils.soliditySha3(id, to, Number(value).toLocaleString('fullwide', { useGrouping: false }));
   const signedMsg = sign(msg);
   res.status(200).json({ signedMsg });
 });

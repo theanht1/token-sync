@@ -55,6 +55,8 @@ window.App = {
   setSendChainTokenLabel: async () => {
     const netId = await web3.eth.net.getId();
 
+    document.getElementById('chain-name').textContent = netId === MAIN_CHAIN_ID ? 'main' : 'side';
+
     const mainChainEl = document.getElementById('main-chain');
     const sideChainEl = document.getElementById('side-chain');
     if (netId === MAIN_CHAIN_ID) {
@@ -99,11 +101,13 @@ window.App = {
   },
 
   getBuyEvents: async () => {
+    const netId = await web3.eth.net.getId();
     return axios.get('/unconfirmed-requests', {
       query: { address: account },
     })
       .then(({ data }) => {
-        boughtEvents = data.mainRequests;
+        boughtEvents = netId == MAIN_CHAIN_ID ? data.sideRequests : data.mainRequests;
+        $('#bought-list').empty();
         boughtEvents.forEach((event, index) => {
           const buyEvent = JSON.parse(event.content);
           $('#bought-list').append(

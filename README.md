@@ -3,18 +3,25 @@
 ### Installation
 ```
 npm install -g truffle
-npm install -g ganache
 npm install
 ```
 
 ### Up and running
 
-* Start ganache
+* Change address of main-chain and side-chain node in `truffle.js`
+
+* Configure `config.json`. E.g:
 ```
-ganache-cli -d
+{
+    "MAIN_CHAIN_URL": "http://localhost:8545",
+    "MAIN_CHAIN_ID": 421,
+    "SIDE_CHAIN_URL": "http://localhost:8546",
+    "SIDE_CHAIN_ID": 422,
+    "SERVER_ADDRESS": "http://localhost:3000"
+}
 ```
 
-* Copy ganache account mnemonic to `secrets.json` file
+* Copy private keys to `secrets.json` file
 ```
 echo `{
   "privateKeys": [
@@ -27,16 +34,22 @@ echo `{
 
 * Migration
 ```
-truffle migrate --reset --compile-all --network ganache
+truffle migrate --reset --compile-all --network mainchain && truffle migrate --reset --network sidechain
 ```
 
 * Start node server
 ```
 npm run server
 ```
-(Notice: if you want to reset/re-deploy contracts, you have to run `rm -rf db` to clear old events database)
 
 * Start GUI
 ```
 npm run dev
+```
+
+* Notice: if you want to reset/re-deploy contracts, you have to clear old events in mongodb:
+```
+mongo
+use token
+db.events.drop()
 ```

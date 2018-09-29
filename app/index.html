@@ -8,6 +8,7 @@
 <body class="container">
   <h1>A demo of cross chain token transfer</h1>
   <div class="row">
+    <p>Your're currently on <span id="chain-name" style="font-weight: 600"></span> chain</p>
     <ul>
       <li id="main-chain">
         Balance on main-chain: <span id="main-chain-balance"></span>
@@ -16,12 +17,12 @@
         Balance on side-chain: <span id="side-chain-balance"></span>
       </li>
     </ul>
-    <a href="#" class="btn btn-default" onClick="App.getBalance()">Refresh</a>
+    <a href="#" class="btn btn-default" onClick="App.getBalance(); App.getBuyEvents()">Refresh</a>
   </div>
   <div class="row mg-t-20">
-    <label>Buy tokens</label>
+    <label>Exchange tokens</label>
     <input type="number" placeholder="Amount of token" name="token-input" id="token-input">
-    <a href="#" class="btn btn-primary" onClick="App.buy()">Buy</a>
+    <a href="#" class="btn btn-primary" onClick="App.buy()">Submit</a>
   </div>
 
   <div class="row mg-t-20">

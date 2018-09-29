@@ -26,7 +26,7 @@ const sideProvider =  new HDWalletProvider(privateKeys, SIDE_CHAIN_URL);
 const SideToken = contract(tokenArtifact);
 SideToken.setProvider(sideProvider);
 
-// Defailt account
+// Default account
 const account = mainProvider.getAddress();
 
 const getInstances = async () => {
