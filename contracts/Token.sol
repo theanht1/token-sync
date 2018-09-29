@@ -33,7 +33,7 @@ contract Token is ERC20, ERC20Detailed, Ownable {
     /// @dev Transfer token to this contract and initial an event for external Oracle
     /// @param _value Amount of token to buy in other chain
     function buy(uint _value) public {
-        require(this.transfer(this, _value));
+        require(transfer(this, _value));
         nBuy = nBuy.add(1);
         emit Buy(nBuy, msg.sender, _value);
     }
@@ -43,7 +43,7 @@ contract Token is ERC20, ERC20Detailed, Ownable {
     /// @param _to Address of buyer
     /// @param _value Amount of token to buy
     function confirmBuy(uint _id, address _to, uint _value, bytes _sig) public {
-        require(this.balanceOf(this) >= _value);
+        require(balanceOf(this) >= _value);
         require(!isCompletedBuy[_id]);
 
         bytes32 hash = keccak256(abi.encodePacked(_id, _to, _value));
