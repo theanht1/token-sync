@@ -1,7 +1,7 @@
-from .providers import w3_main, w3_side
-from .config import config
 import json
 
+from .config import config
+from .providers import w3_main, w3_side
 
 with open('../build/contracts/Token.json', 'r') as f:
     token_artifact = json.load(f)
@@ -15,4 +15,3 @@ TokenSide = w3_side.eth.contract(
     address=w3_side.toChecksumAddress(token_artifact['networks'][str(config['SIDE_CHAIN_ID'])]['address']),
     abi=token_artifact['abi']
 )
-

@@ -7,3 +7,5 @@ class Event(db.Document):
     type = db.StringField()
     content = db.StringField()
 
+    def as_dict(self):
+        return {c: str(getattr(self, c)) for c in ['key', 'chain', 'type', 'content']}

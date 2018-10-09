@@ -2,3 +2,4 @@ flask
 web3
 Flask-MongoAlchemy
 asyncio
+flask-cors

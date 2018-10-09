@@ -33,10 +33,10 @@ module.exports = (deployer, network, accounts) => {
     .then(async (result) => {
       if (network === 'sidechain') {
         // Give all tokens to the token contract in side chain
-        sendToken(result.address, config.token.supply);
+        await sendToken(result.address, config.token.supply);
       } else {
         // Distribute tokens on main chain
-        giveTokensTo(config.token.tokenHolders);
+        await giveTokensTo(config.token.tokenHolders);
       }
     });
 };
