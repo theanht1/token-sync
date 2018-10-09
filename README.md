@@ -37,11 +37,6 @@ echo `{
 truffle migrate --reset --compile-all --network mainchain && truffle migrate --reset --network sidechain
 ```
 
-* Start node server
-```
-npm run server
-```
-
 * Start GUI
 ```
 npm run dev
@@ -53,3 +48,25 @@ mongo
 use token
 db.events.drop()
 ```
+
+### Server
+There are two options to start server
+
+1. Node server
+```
+npm run server
+```
+
+2. Python server
+```
+cd py_server
+python3 -m venv venv
+
+. venv/bin/activate
+pip install 0r requirements.txt
+
+# Start server
+FLASK_APP=api/app.py FLASK_ENV=development python -m flask run -p 3000
+
+# Start event listener in another terminal
+python events_listener.py
