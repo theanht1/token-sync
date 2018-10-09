@@ -86,7 +86,6 @@ window.App = {
     const event = JSON.parse(boughtEvents[index].content);
     return axios.post('/retrieve-msg', { event })
       .then(async ({ data: { signedMsg } }) => {
-        console.log(signedMsg);
         const tokenInstance = await Token.deployed();
         const { args: { id, to, value } } = event;
         await tokenInstance.confirmBuy(id, to, value, signedMsg, { from: account });
